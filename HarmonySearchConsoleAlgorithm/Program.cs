@@ -10,8 +10,9 @@ namespace HarmonySearchConsoleAlgorithm
     {
         public static double evaluateFun(double x1, double x2)
         {
-           return 4 * Math.Pow(x1, 2) - 2.1 * Math.Pow(x1, 4) + (1 / 3) * Math.Pow(x1, 6) + x1 * x2 - 4 * Math.Pow(x2, 2) + 4 * Math.Pow(x2, 4);
+            return (4 - 2.1 * Math.Pow(x1, 2) + Math.Pow(x1, 4) / 3) * Math.Pow(x1, 2) + x1 * x2 + (-4 + 4 * Math.Pow(x2, 2)) * Math.Pow(x2, 2);
         }
+        
 
         public static void swap(double[,] tab, int i1, int j1, int i2, int j2)
         {
@@ -77,6 +78,51 @@ namespace HarmonySearchConsoleAlgorithm
         }
 
 
+        public static double[] newHarmonyVector(double[,] HMtab,double HMCR, double PAR, double BW, double PVBmin, double PVBmax)
+        {
+            int newIndex;
+            int variables = HMtab.GetLength(1);
+            double[] vec = new double[variables]; //new harmony vector
+            Random rand = new Random();
+            for (int i=0; i<variables-1; i++) // -1 bo osatnia kolumna dla f(X)
+            {
+                if (rand.NextDouble() < HMCR)
+                {
+                    newIndex = Convert.ToInt32(rand.NextDouble() * HMtab.GetLength(0));
+                    vec[i] = HMtab[newIndex, i];
+                    Console.WriteLine("Memory considering");
+                    if (rand.NextDouble() < PAR)
+                    {
+                        if (rand.NextDouble() < 0.5)
+                        {
+                            double D5 = vec[i] - rand.NextDouble() * BW;
+                            if (D5>=PVBmin)
+                            {
+                                vec[i] = D5; //pitch adjustment
+                                Console.WriteLine("Pitch adjustment - bw");
+                            }
+                        }
+                        else
+                        {
+                            double D5_2 = vec[i] + rand.NextDouble() * BW;
+                            if (D5_2<=PVBmax)
+                            {
+                                vec[i] = D5_2;
+                                Console.WriteLine("Pitch adjustment + bw");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    vec[i]= rand.NextDouble() * (PVBmax - PVBmin) + PVBmin; //randomizacja
+                    Console.WriteLine("Randomizacja");
+                }
+            }
+            return vec;
+        }
+
+
     }
 
 
@@ -94,15 +140,23 @@ namespace HarmonySearchConsoleAlgorithm
             double PVBmin = -10;
             double PVBmax = 10;
             double[,] testTab = new double[10,3];
+            double[] newVec = new double[3];
             HarmonyTool.initializeHM(testTab,-10,10);
-            HarmonyTool.displayHM(testTab);
+            //HarmonyTool.displayHM(testTab);
             HarmonyTool.performHM(testTab);
-            Console.WriteLine("\n");
-            HarmonyTool.displayHM(testTab);
+           // Console.WriteLine("\n");
+           // HarmonyTool.displayHM(testTab);
             HarmonyTool.sortHM(testTab);
-            Console.WriteLine("Harmony memory posortowana!");
+            //Console.WriteLine("Harmony memory posortowana!");
             HarmonyTool.displayHM(testTab);
-          
+            Console.WriteLine();
+            Console.WriteLine();
+            //Console.WriteLine("Testowy obliczenia evaluate fun: "+HarmonyTool.evaluateFun(3.183,-0.4));
+            newVec = HarmonyTool.newHarmonyVector(testTab, HMCR, PAR, BW, PVBmin, PVBmax);
+            Console.WriteLine("nowy wektor: " + newVec[0]+" "+newVec[1] );
+
+
+
 
            
         }
