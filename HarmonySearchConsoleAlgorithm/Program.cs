@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using org.mariuszgromada.math.mxparser;
 
 namespace HarmonySearchConsoleAlgorithm
 {
     class HarmonyTool
     {
-        public static double evaluateFun(double x1, double x2)
+       
+        public static double evaluateFun(Function f, double[] variables)
         {
-            return (4 - 2.1 * Math.Pow(x1, 2) + Math.Pow(x1, 4) / 3) * Math.Pow(x1, 2) + x1 * x2 + (-4 + 4 * Math.Pow(x2, 2)) * Math.Pow(x2, 2);
+            double result = f.calculate(variables);
+            return result;
         }
 
         public static void swap(double[,] tab, int i1, int j1, int i2, int j2)
@@ -47,21 +50,30 @@ namespace HarmonySearchConsoleAlgorithm
             }
         }
         //obliczanie f(x) dla kazdego wektora z HM
-        public static void performHM(double[,] HMtab)
+        public static void performHM(Function f, double[,] HMtab)
         {
-            for (int i = 0; i < HMtab.GetLength(0); i++)
+            double[] valuesOfVariables = new double[HMtab.GetLength(1) - 1];
+            for (int i = 0; i < HMtab.GetLength(0); i++) 
             {
-                HMtab[i, (HMtab.GetLength(1) - 1)] = HarmonyTool.evaluateFun(HMtab[i, 0], HMtab[i, 1]);
+                for(int j=0; j< HMtab.GetLength(1) - 1; j++) //przejscie po parametrach, wykluczajac ostatnia kolumne z wartoscia f(x)
+                {
+                    valuesOfVariables[j] = HMtab[i,j];
+                }
+                HMtab[i, (HMtab.GetLength(1) - 1)] = HarmonyTool.evaluateFun(f, valuesOfVariables);
             }
         }
 
         //obliczanie wartosci f(x) nowego wektora 
-        public static void performVec(double[] vec)
+        public static void performVec(Function f, double[] vec)
         {
-            vec[vec.GetLength(0) - 1] = HarmonyTool.evaluateFun(vec[0], vec[1]);   
+            double[] vecOfValues = new double[f.getArgumentsNumber()];
+            for(int i=0; i< f.getArgumentsNumber(); i++)
+            {
+                vecOfValues[i] = vec[i]; //przypisanie wartosci do wektora pomocniczego z wektora nowo znalezionego
+            }
+            vec[vec.GetLength(0) - 1] = HarmonyTool.evaluateFun(f,vecOfValues);   
         }
 
-        //tutaj jako argument bedzie podawany string funkcji (mxParser)
         public static void sortHM(double [,] HMtab)
         {
             int valuePosition = HMtab.GetLength(1) - 1;
@@ -82,7 +94,7 @@ namespace HarmonySearchConsoleAlgorithm
         }
 
 
-        public static double[] newHarmonyVector(double[,] HMtab,double HMCR, double PAR, double BW, double PVBmin, double PVBmax)
+        public static double[] newHarmonyVector(double[,] HMtab, double HMCR, double PAR, double BW, double PVBmin, double PVBmax)
         {
             int newIndex;
             int variables = HMtab.GetLength(1);
@@ -123,9 +135,9 @@ namespace HarmonySearchConsoleAlgorithm
         }
 
 
-        public static void updateHM(double[,] HMtab, double[] vec)
+        public static void updateHM(double[,] HMtab,Function f ,double[] vec)
         {
-            HarmonyTool.performVec(vec);
+            HarmonyTool.performVec(f,vec);
             if (vec[vec.GetLength(0)-1] < HMtab[HMtab.GetLength(0)-1,HMtab.GetLength(1)-1])
             {
                 for(int i=0; i< HMtab.GetLength(1); i++)
@@ -137,29 +149,29 @@ namespace HarmonySearchConsoleAlgorithm
         }
 
 
-        public static void HarmonySearchAlgorithm(int NI, int HMS, double HMCR, double PAR, double BW, double PVBmin, double PVBmax)
+        public static void HarmonySearchAlgorithm(Function f,int NI, int HMS, double HMCR, double PAR, double BW, double PVBmin, double PVBmax)
         {
-            int numberofVariables = 2;
+            int numberofVariables = f.getArgumentsNumber();
             double[,] HMtab = new double[HMS, numberofVariables + 1];
+            int iterations = 0;
             HarmonyTool.initializeHM(HMtab, PVBmin, PVBmax);
-            HarmonyTool.performHM(HMtab);
+            HarmonyTool.performHM(f,HMtab);
             HarmonyTool.sortHM(HMtab);
             double[] newVec = new double[HMtab.GetLength(1)];
-            for(int i=0; i< NI; i++)
+            for (int i = 0; i < NI; i++)
             {
                 newVec = HarmonyTool.newHarmonyVector(HMtab, HMCR, PAR, BW, PVBmin, PVBmax);
-                HarmonyTool.updateHM(HMtab, newVec);
-                Console.WriteLine("iteracja nr: "+i);
+                HarmonyTool.updateHM(HMtab,f, newVec);
+                iterations++;
+                Console.WriteLine("iterancja nr: "+i);
+                Console.WriteLine("Wait");
             }
             Console.WriteLine("Koniec obliczen");
+            Console.WriteLine("Liczba wykonanych iteracji: " + iterations);
             Console.WriteLine("Ostateczna tabela Harmony Memory:");
             HarmonyTool.displayHM(HMtab);
-            
+
         }
-
-
-
-
 
     }
 
@@ -177,10 +189,12 @@ namespace HarmonySearchConsoleAlgorithm
             int NI=5000;
             double PVBmin = -10;
             double PVBmax = 10;
-            double[,] testTab = new double[10, 3];
-            HarmonyTool.HarmonySearchAlgorithm(NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax);
+            String fn_string = "f(x1,x2)=(4-2.1*x1^2+x1^4/3)*x1^2+x1*x2+(-4+4*x2^2)*x2^2";
+            Function fn = new Function(fn_string);
+            HarmonyTool.HarmonySearchAlgorithm(fn,NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax);
             Console.WriteLine("");
-     
+
+
 
 
         }
