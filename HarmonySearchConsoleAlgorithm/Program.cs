@@ -9,6 +9,19 @@ namespace HarmonySearchConsoleAlgorithm
 {
     class HarmonyTool
     {
+        public static double rand_cont_gen(String min, String max)
+        {
+            Expression e = new Expression("rUni("+min+","+max+")");
+            return e.calculate();
+        }
+
+        public static int rand_discrete_gen(String min, String max)
+        {
+            Expression e = new Expression("rUnid(" + min + "," + max + ")");
+            double result = e.calculate();
+            return Convert.ToInt32(result);
+        }
+
        
         public static double evaluateFun(Function f, double[] variables)
         {
@@ -25,13 +38,12 @@ namespace HarmonySearchConsoleAlgorithm
 
         public static void initializeHM(double[,] HMtab, double PVBmin, double PVBmax)
         {
-            Random rand = new Random();
             double tmp;
             for(int i=0; i<HMtab.GetLength(0); i++)
             {
                 for(int j=0; j<HMtab.GetLength(1)-1; j++)
                 {
-                    tmp = rand.NextDouble() * (PVBmax-PVBmin)+PVBmin;
+                    tmp = HarmonyTool.rand_cont_gen("0", "1") * (PVBmax-PVBmin)+PVBmin;
                     HMtab[i, j] = tmp;
                 }
                 HMtab[i, HMtab.GetLength(1) - 1] = 0;
@@ -98,19 +110,19 @@ namespace HarmonySearchConsoleAlgorithm
         {
             int newIndex;
             int variables = HMtab.GetLength(1);
-            double[] vec = new double[variables]; //new harmony vector
             Random rand = new Random();
+            double[] vec = new double[variables]; //new harmony vector
             for (int i=0; i<variables-1; i++) // -1 bo osatnia kolumna dla f(X)
             {
                 if (rand.NextDouble() < HMCR)
                 {
-                    newIndex = rand.Next(0,HMtab.GetLength(0));
+                    newIndex = HarmonyTool.rand_discrete_gen("0", "9");
                     vec[i] = HMtab[newIndex, i];
                     if (rand.NextDouble() < PAR)
                     {
                         if (rand.NextDouble() < 0.5)
                         {
-                            double D5 = vec[i] - rand.NextDouble() * BW;
+                            double D5 = vec[i] - HarmonyTool.rand_cont_gen("0","1") * BW;
                             if (D5>=PVBmin)
                             {
                                 vec[i] = D5; //pitch adjustment
@@ -118,7 +130,7 @@ namespace HarmonySearchConsoleAlgorithm
                         }
                         else
                         {
-                            double D5_2 = vec[i] + rand.NextDouble() * BW;
+                            double D5_2 = vec[i] + HarmonyTool.rand_cont_gen("0", "1") * BW;
                             if (D5_2<=PVBmax)
                             {
                                 vec[i] = D5_2;
@@ -128,7 +140,7 @@ namespace HarmonySearchConsoleAlgorithm
                 }
                 else
                 {
-                    vec[i]= rand.NextDouble() * (PVBmax - PVBmin) + PVBmin; //randomizacja
+                    vec[i]= HarmonyTool.rand_cont_gen("0", "1") * (PVBmax - PVBmin) + PVBmin; //randomizacja
                 }
             }
             return vec;
@@ -163,8 +175,6 @@ namespace HarmonySearchConsoleAlgorithm
                 newVec = HarmonyTool.newHarmonyVector(HMtab, HMCR, PAR, BW, PVBmin, PVBmax);
                 HarmonyTool.updateHM(HMtab,f, newVec);
                 iterations++;
-                Console.WriteLine("iterancja nr: "+i);
-                Console.WriteLine("Wait");
             }
             Console.WriteLine("Koniec obliczen");
             Console.WriteLine("Liczba wykonanych iteracji: " + iterations);
@@ -192,8 +202,11 @@ namespace HarmonySearchConsoleAlgorithm
             String fn_string = "f(x1,x2)=(4-2.1*x1^2+x1^4/3)*x1^2+x1*x2+(-4+4*x2^2)*x2^2";
             Function fn = new Function(fn_string);
             HarmonyTool.HarmonySearchAlgorithm(fn,NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax);
-            Console.WriteLine("");
-
+            //Console.WriteLine("");
+            /*for(int i=0; i<10; i++)
+            {
+                Console.WriteLine("rand: " + HarmonyTool.rand_discrete_gen("0", "10"));
+            }*/
 
 
 
