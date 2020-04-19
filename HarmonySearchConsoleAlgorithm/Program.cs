@@ -12,7 +12,6 @@ namespace HarmonySearchConsoleAlgorithm
         {
             return (4 - 2.1 * Math.Pow(x1, 2) + Math.Pow(x1, 4) / 3) * Math.Pow(x1, 2) + x1 * x2 + (-4 + 4 * Math.Pow(x2, 2)) * Math.Pow(x2, 2);
         }
-        
 
         public static void swap(double[,] tab, int i1, int j1, int i2, int j2)
         {
@@ -95,7 +94,6 @@ namespace HarmonySearchConsoleAlgorithm
                 {
                     newIndex = rand.Next(0,HMtab.GetLength(0));
                     vec[i] = HMtab[newIndex, i];
-                    //Console.WriteLine("Memory considering");
                     if (rand.NextDouble() < PAR)
                     {
                         if (rand.NextDouble() < 0.5)
@@ -104,7 +102,6 @@ namespace HarmonySearchConsoleAlgorithm
                             if (D5>=PVBmin)
                             {
                                 vec[i] = D5; //pitch adjustment
-                                //Console.WriteLine("Pitch adjustment - bw");
                             }
                         }
                         else
@@ -113,7 +110,6 @@ namespace HarmonySearchConsoleAlgorithm
                             if (D5_2<=PVBmax)
                             {
                                 vec[i] = D5_2;
-                                //Console.WriteLine("Pitch adjustment + bw");
                             }
                         }
                     }
@@ -121,7 +117,6 @@ namespace HarmonySearchConsoleAlgorithm
                 else
                 {
                     vec[i]= rand.NextDouble() * (PVBmax - PVBmin) + PVBmin; //randomizacja
-                    //Console.WriteLine("Randomizacja");
                 }
             }
             return vec;
@@ -147,16 +142,19 @@ namespace HarmonySearchConsoleAlgorithm
             int numberofVariables = 2;
             double[,] HMtab = new double[HMS, numberofVariables + 1];
             HarmonyTool.initializeHM(HMtab, PVBmin, PVBmax);
+            HarmonyTool.performHM(HMtab);
             HarmonyTool.sortHM(HMtab);
             double[] newVec = new double[HMtab.GetLength(1)];
             for(int i=0; i< NI; i++)
             {
                 newVec = HarmonyTool.newHarmonyVector(HMtab, HMCR, PAR, BW, PVBmin, PVBmax);
                 HarmonyTool.updateHM(HMtab, newVec);
+                Console.WriteLine("iteracja nr: "+i);
             }
             Console.WriteLine("Koniec obliczen");
             Console.WriteLine("Ostateczna tabela Harmony Memory:");
             HarmonyTool.displayHM(HMtab);
+            
         }
 
 
@@ -176,14 +174,13 @@ namespace HarmonySearchConsoleAlgorithm
             double PAR=0.45;
             double BW=0.2;
             int HMS = 10;
-            int NI=5550;
+            int NI=5000;
             double PVBmin = -10;
             double PVBmax = 10;
+            double[,] testTab = new double[10, 3];
             HarmonyTool.HarmonySearchAlgorithm(NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax);
-           
-
-
-
+            Console.WriteLine("");
+     
 
 
         }
