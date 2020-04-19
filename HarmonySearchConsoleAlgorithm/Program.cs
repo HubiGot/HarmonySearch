@@ -200,14 +200,9 @@ namespace HarmonySearchConsoleAlgorithm
             double PVBmin = -10;
             double PVBmax = 10;
             String fn_string = "f(x1,x2)=(4-2.1*x1^2+x1^4/3)*x1^2+x1*x2+(-4+4*x2^2)*x2^2";
+            //String fn_string = "f(x1,x2)=100*(x2-x1^2)^2+(1-x1)^2";
             Function fn = new Function(fn_string);
             HarmonyTool.HarmonySearchAlgorithm(fn,NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax);
-            //Console.WriteLine("");
-            /*for(int i=0; i<10; i++)
-            {
-                Console.WriteLine("rand: " + HarmonyTool.rand_discrete_gen("0", "10"));
-            }*/
-
 
 
         }
