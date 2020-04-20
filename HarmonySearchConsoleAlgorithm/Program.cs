@@ -36,14 +36,14 @@ namespace HarmonySearchConsoleAlgorithm
             tab[i2, j2] = tmp;
         }
 
-        public static void initializeHM(double[,] HMtab, double PVBmin, double PVBmax)
+        public static void initializeHM(double[,] HMtab, double[] PVBmin, double[] PVBmax)
         {
             double tmp;
             for(int i=0; i<HMtab.GetLength(0); i++)
             {
                 for(int j=0; j<HMtab.GetLength(1)-1; j++)
                 {
-                    tmp = HarmonyTool.rand_cont_gen("0", "1") * (PVBmax-PVBmin)+PVBmin;
+                    tmp = HarmonyTool.rand_cont_gen("0", "1") * (PVBmax[j]-PVBmin[j])+PVBmin[j];
                     HMtab[i, j] = tmp;
                 }
                 HMtab[i, HMtab.GetLength(1) - 1] = 0;
@@ -106,7 +106,7 @@ namespace HarmonySearchConsoleAlgorithm
         }
 
 
-        public static double[] newHarmonyVector(double[,] HMtab, double HMCR, double PAR, double BW, double PVBmin, double PVBmax)
+        public static double[] newHarmonyVector(double[,] HMtab, double HMCR, double PAR, double BW, double[] PVBmin, double[] PVBmax)
         {
             int newIndex;
             int variables = HMtab.GetLength(1);
@@ -123,7 +123,7 @@ namespace HarmonySearchConsoleAlgorithm
                         if (rand.NextDouble() < 0.5)
                         {
                             double D5 = vec[i] - HarmonyTool.rand_cont_gen("0","1") * BW;
-                            if (D5>=PVBmin)
+                            if (D5>=PVBmin[i])
                             {
                                 vec[i] = D5; //pitch adjustment
                             }
@@ -131,7 +131,7 @@ namespace HarmonySearchConsoleAlgorithm
                         else
                         {
                             double D5_2 = vec[i] + HarmonyTool.rand_cont_gen("0", "1") * BW;
-                            if (D5_2<=PVBmax)
+                            if (D5_2<=PVBmax[i])
                             {
                                 vec[i] = D5_2;
                             }
@@ -140,7 +140,7 @@ namespace HarmonySearchConsoleAlgorithm
                 }
                 else
                 {
-                    vec[i]= HarmonyTool.rand_cont_gen("0", "1") * (PVBmax - PVBmin) + PVBmin; //randomizacja
+                    vec[i]= HarmonyTool.rand_cont_gen("0", "1") * (PVBmax[i] - PVBmin[i]) + PVBmin[i]; //randomizacja
                 }
             }
             return vec;
@@ -161,7 +161,7 @@ namespace HarmonySearchConsoleAlgorithm
         }
 
 
-        public static void HarmonySearchAlgorithm(Function f,int NI, int HMS, double HMCR, double PAR, double BW, double PVBmin, double PVBmax)
+        public static void HarmonySearchAlgorithm(Function f,int NI, int HMS, double HMCR, double PAR, double BW, double[] PVBmin, double[] PVBmax)
         {
             int numberofVariables = f.getArgumentsNumber();
             double[,] HMtab = new double[HMS, numberofVariables + 1];
@@ -192,18 +192,18 @@ namespace HarmonySearchConsoleAlgorithm
     {
         static void Main(string[] args)
         {
-            double HMCR=0.85;
-            double PAR=0.45;
-            double BW=0.2;
+            double HMCR = 0.85;
+            double PAR = 0.45;
+            double BW = 0.2;
             int HMS = 10;
-            int NI=5000;
-            double PVBmin = -10;
-            double PVBmax = 10;
+            int NI = 5000;
+            double[] PVBmin = { -10, -10 };
+            double[] PVBmax = { 10, 10 };
             String fn_string = "f(x1,x2)=(4-2.1*x1^2+x1^4/3)*x1^2+x1*x2+(-4+4*x2^2)*x2^2";
             //String fn_string = "f(x1,x2)=100*(x2-x1^2)^2+(1-x1)^2";
             Function fn = new Function(fn_string);
             HarmonyTool.HarmonySearchAlgorithm(fn,NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax);
-
+            
 
         }
 
