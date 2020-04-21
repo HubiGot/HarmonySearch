@@ -24,5 +24,15 @@ namespace HarmonySearchWPFapp
         {
             InitializeComponent();
         }
+
+        private void PAR_slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            PAR_textbox.Text = PAR_slider.Value.ToString();
+        }
+
+        private void HMCR_slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            HMCR_textbox.Text = HMCR_slider.Value.ToString();
+        }
     }
 }
