@@ -180,7 +180,7 @@ namespace HarmonySearchWPFapp
                 HarmonyTool.UpdateHM(HMtab, f, newVec);
                 if (NI-iterations <= 3)
                 {
-                    output += HarmonyTool.DisplayHM(HMtab)+"\n"+"\n";
+                    output +="Iteration number: "+iterations.ToString()+"\n" + HarmonyTool.DisplayHM(HMtab)+"\n"+"\n";
                 }
                 iterations++;
             }

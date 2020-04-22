@@ -108,7 +108,7 @@ namespace HarmonySearchWPFapp
             HMS_TextBox.Text = null;
             NI_TextBox.Text = null;
             BW_TextBox.Text = null;
-            ObjFun_ComboBox.SelectedIndex = 0;
+            ObjFun_ComboBox.SelectedIndex = 2;
             PVBmax_TextBox.Text = null;
             PVBmin_TextBox.Text = null;
             HMCR_slider.Value = 0;
