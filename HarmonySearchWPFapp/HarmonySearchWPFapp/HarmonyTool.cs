@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using org.mariuszgromada.math.mxparser;
+using MathNet.Numerics.Random;
+using MathNet.Numerics.Distributions;
 
 namespace HarmonySearchWPFapp
 {
@@ -39,12 +41,13 @@ namespace HarmonySearchWPFapp
 
         public static void InitializeHM(double[,] HMtab, double[] PVBmin, double[] PVBmax)
         {
+            System.Random rng = SystemRandomSource.Default;
             double tmp;
             for (int i = 0; i < HMtab.GetLength(0); i++)
             {
                 for (int j = 0; j < HMtab.GetLength(1) - 1; j++)
                 {
-                    tmp = HarmonyTool.Rand_cont_gen("0", "1") * (PVBmax[j] - PVBmin[j]) + PVBmin[j];
+                    tmp = rng.NextDouble() * (PVBmax[j] - PVBmin[j]) + PVBmin[j];
                     HMtab[i, j] = tmp;
                 }
                 HMtab[i, HMtab.GetLength(1) - 1] = 0;
@@ -113,19 +116,19 @@ namespace HarmonySearchWPFapp
         {
             int newIndex;
             int variables = HMtab.GetLength(1);
-            Random rand = new Random();
+            System.Random rng = SystemRandomSource.Default;
             double[] vec = new double[variables]; //new harmony vector
             for (int i = 0; i < variables - 1; i++) // -1 bo osatnia kolumna dla f(X)
             {
-                if (rand.NextDouble() < HMCR)
+                if (rng.NextDouble() < HMCR)
                 {
-                    newIndex = HarmonyTool.Rand_discrete_gen("0", "9");
+                    newIndex = rng.Next(0,10);
                     vec[i] = HMtab[newIndex, i];
-                    if (rand.NextDouble() < PAR)
+                    if (rng.NextDouble() < PAR)
                     {
-                        if (rand.NextDouble() < 0.5)
+                        if (rng.NextDouble() < 0.5)
                         {
-                            double D5 = vec[i] - HarmonyTool.Rand_cont_gen("0", "1") * BW;
+                            double D5 = vec[i] - rng.NextDouble() * BW;
                             if (D5 >= PVBmin[i])
                             {
                                 vec[i] = D5; //pitch adjustment
@@ -133,7 +136,7 @@ namespace HarmonySearchWPFapp
                         }
                         else
                         {
-                            double D5_2 = vec[i] + HarmonyTool.Rand_cont_gen("0", "1") * BW;
+                            double D5_2 = vec[i] + rng.NextDouble() * BW;
                             if (D5_2 <= PVBmax[i])
                             {
                                 vec[i] = D5_2;
@@ -143,7 +146,7 @@ namespace HarmonySearchWPFapp
                 }
                 else
                 {
-                    vec[i] = HarmonyTool.Rand_cont_gen("0", "1") * (PVBmax[i] - PVBmin[i]) + PVBmin[i]; //randomizacja
+                    vec[i] = rng.NextDouble() * (PVBmax[i] - PVBmin[i]) + PVBmin[i]; //randomizacja
                 }
             }
             return vec;
