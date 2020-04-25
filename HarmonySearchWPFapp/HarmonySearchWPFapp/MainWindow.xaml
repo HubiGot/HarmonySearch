@@ -8,125 +8,141 @@
         Title="Harmony Search Algorithm" Height="880" Width="1250">
 
     <Border Padding="10">
-        
-        <StackPanel Margin="0,0,693,0">
-           
+        <Grid>
 
-            <TextBlock Text="Input Parameters" FontWeight="Bold" Margin="0 10 " FontSize="10 pt"/>
-            <TextBlock Text="Objective function"/>
-            <ComboBox x:Name="ObjFun_ComboBox" SelectedIndex="2" Padding="2" IsEditable="True">
-                <ComboBoxItem></ComboBoxItem>
-                <ComboBoxItem>f(x1,x2,x3)=x1+x2+x3</ComboBoxItem>
-                <ComboBoxItem>f(x1,x2)=(4-2.1*x1^2+x1^4/3)*x1^2+x1*x2+(-4+4*x2^2)*x2^2</ComboBoxItem>
-            </ComboBox>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="550" />
+                <ColumnDefinition Width="700" />
+            </Grid.ColumnDefinitions>
 
-            <Grid>
-                <!-- HMS BW NI -->
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <!--HMS -->
-                <StackPanel  Margin="0 10 5 0" Grid.Column="0">
-                    <TextBlock Text="Harmony Memory Size (HMS)" FontWeight="Bold"/>
-                    <TextBox x:Name="HMS_TextBox" Padding="2"/>
-                </StackPanel>
+            <StackPanel Grid.Column="0" Margin="0,0,10,0">
 
 
-                <!--NI -->
-                <StackPanel Margin="0 10 0 0"  Grid.Column="1">
-                    <TextBlock Text="Number of iterations (NI)" FontWeight="Bold"/>
-                    <TextBox x:Name="NI_TextBox" Padding="2"/>
-                </StackPanel>
+                <TextBlock Text="Input Parameters" FontWeight="Bold" Margin="0 10 " FontSize="10 pt"/>
+                <TextBlock Text="Objective function"/>
+                <ComboBox x:Name="ObjFun_ComboBox" SelectedIndex="2" Padding="2" IsEditable="True">
+                    <ComboBoxItem></ComboBoxItem>
+                    <ComboBoxItem>f(x1,x2,x3)=x1+x2+x3</ComboBoxItem>
+                    <ComboBoxItem>f(x1,x2)=(4-2.1*x1^2+x1^4/3)*x1^2+x1*x2+(-4+4*x2^2)*x2^2</ComboBoxItem>
+                </ComboBox>
 
-                <!--BW -->
-                <StackPanel Margin="5 10 0 0" Grid.Column="2">
-                    <TextBlock Text="Bandwidth (BW)" FontWeight="Bold"/>
-                    <TextBox x:Name="BW_TextBox" Padding="2"/>
-                </StackPanel>
+                <Grid>
+                    <!-- HMS BW NI -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-            </Grid>
+                    <!--HMS -->
+                    <StackPanel  Margin="0 10 5 0" Grid.Column="0">
+                        <TextBlock Text="Harmony Memory Size (HMS)" FontWeight="Bold"/>
+                        <TextBox x:Name="HMS_TextBox" Padding="2"/>
+                    </StackPanel>
 
-            <TextBlock Text="Possible Value Bound for xi" FontWeight="Bold" Margin="0 10 0 0" FontSize="9 pt"/>
-            <Grid>
-                <!-- PVb min- max -->
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
 
-                <!--PVB min -->
-                <StackPanel  Margin="0 0 5 0" Grid.Column="0">
-                    <TextBlock Text="PVBmin" FontWeight="Bold"/>
-                    <TextBox x:Name="PVBmin_TextBox" Padding="2"/>
-                </StackPanel>
+                    <!--NI -->
+                    <StackPanel Margin="0 10 0 0"  Grid.Column="1">
+                        <TextBlock Text="Number of iterations (NI)" FontWeight="Bold"/>
+                        <TextBox x:Name="NI_TextBox" Padding="2"/>
+                    </StackPanel>
 
-                <!--PVB max -->
-                <StackPanel  Margin="0 0 0 0" Grid.Column="1">
-                    <TextBlock Text="PVBmax" FontWeight="Bold"/>
-                    <TextBox x:Name="PVBmax_TextBox" Padding="2"/>
-                </StackPanel>
+                    <!--BW -->
+                    <StackPanel Margin="5 10 0 0" Grid.Column="2">
+                        <TextBlock Text="Bandwidth (BW)" FontWeight="Bold"/>
+                        <TextBox x:Name="BW_TextBox" Padding="2"/>
+                    </StackPanel>
 
-            </Grid>
-            <TextBlock Text="Harmony Memory Considering Rate (HMCR) and Pitch Adjustment Rate (PAR)" Margin="0 10 0 15" FontWeight="Bold"/>
+                </Grid>
 
-            <Grid Margin="0 0 0 20">
-                <!-- HMCR PAR -->
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                <TextBlock Text="Possible Value Bound for xi" FontWeight="Bold" Margin="0 10 0 0" FontSize="9 pt"/>
+                <Grid>
+                    <!-- PVb min- max -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <TextBlock  Text="HMCR" VerticalAlignment="Center"/>
-                    <TextBox Name="HMCR_textbox" TextChanged="HMCR_textbox_TextChanged" Width="60" Padding="2" Margin="10 0 0 0"  Background="#eee"/>
-                </StackPanel>
-                
-                <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <TextBlock  Text="PAR" VerticalAlignment="Center"/>
-                    <TextBox Name="PAR_textbox" TextChanged="PAR_textbox_TextChanged" Width="60" Padding="2" Margin="10 0 0 0" Background="#eee"/>
-                </StackPanel>
-            </Grid>
+                    <!--PVB min -->
+                    <StackPanel  Margin="0 0 5 0" Grid.Column="0">
+                        <TextBlock Text="PVBmin" FontWeight="Bold"/>
+                        <TextBox x:Name="PVBmin_TextBox" Padding="2"/>
+                    </StackPanel>
+
+                    <!--PVB max -->
+                    <StackPanel  Margin="0 0 0 0" Grid.Column="1">
+                        <TextBlock Text="PVBmax" FontWeight="Bold"/>
+                        <TextBox x:Name="PVBmax_TextBox" Padding="2"/>
+                    </StackPanel>
+
+                </Grid>
+                <TextBlock Text="Harmony Memory Considering Rate (HMCR) and Pitch Adjustment Rate (PAR)" Margin="0 10 0 15" FontWeight="Bold"/>
+
+                <Grid Margin="0 0 0 20">
+                    <!-- HMCR PAR -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <TextBlock  Text="HMCR" VerticalAlignment="Center"/>
+                        <TextBox Name="HMCR_textbox" TextChanged="HMCR_textbox_TextChanged" Width="60" Padding="2" Margin="10 0 0 0"  Background="#eee"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <TextBlock  Text="PAR" VerticalAlignment="Center"/>
+                        <TextBox Name="PAR_textbox" TextChanged="PAR_textbox_TextChanged" Width="60" Padding="2" Margin="10 0 0 0" Background="#eee"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid>
+                    <!-- HMCR PAR -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--HMCR -->
+
+                    <Slider Name="HMCR_slider" ValueChanged="HMCR_slider_ValueChanged"  Margin="0 0 5 0" Grid.Column="0" Minimum="0" Maximum="1" IsSnapToTickEnabled="True"  TickFrequency="0.01"></Slider>
+
+                    <!--PAR  -->
+                    <Slider Name="PAR_slider" ValueChanged="PAR_slider_ValueChanged" Margin="0 0 0 0" Grid.Column="1" Minimum="0" Maximum="1" IsSnapToTickEnabled="True"  TickFrequency="0.01" />
+
+                </Grid>
+
+
+                <!--Buttons-->
+                <Grid Margin="0 30 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="Calculate_Btn" Margin="0 0 10 0" Grid.Column="0" Content="Calculate" Click="Calculate_Btn_Click"></Button>
+                    <Button x:Name="Reset_Btn" Grid.Column="1" Content="Reset" Click="Reset_Btn_Click"></Button>
+                </Grid>
+
+
+                <ScrollViewer Margin="0 50 0 0">
+                    <TextBox Name="Result_TextBox" Height="400" IsReadOnly="True" Background="#eee" />
+                </ScrollViewer>
+
+
+            </StackPanel>
+
+            <StackPanel Grid.Column="1">
+                <local:SurfacePlotView x:Name="mySurfacePlotView" Title="Objective function" VerticalAlignment="Center" Height="693.049" Margin="50,50,50,50"/>
+                <Button x:Name="Plot_btn" Click="Plot_btn_Click">Plot function</Button>
+
+            </StackPanel>
             
-            <Grid>
-                <!-- HMCR PAR -->
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <!--HMCR -->
-
-                <Slider Name="HMCR_slider" ValueChanged="HMCR_slider_ValueChanged"  Margin="0 0 5 0" Grid.Column="0" Minimum="0" Maximum="1" IsSnapToTickEnabled="True"  TickFrequency="0.01"></Slider>
-
-                <!--PAR  -->
-                <Slider Name="PAR_slider" ValueChanged="PAR_slider_ValueChanged" Margin="0 0 0 0" Grid.Column="1" Minimum="0" Maximum="1" IsSnapToTickEnabled="True"  TickFrequency="0.01" />
-
-            </Grid>
+        </Grid>
 
 
-            <!--Buttons-->
-            <Grid Margin="0 30 0 0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
 
-                <Button x:Name="Calculate_Btn" Margin="0 0 10 0" Grid.Column="0" Content="Calculate" Click="Calculate_Btn_Click"></Button>
-                <Button x:Name="Reset_Btn" Grid.Column="1" Content="Reset" Click="Reset_Btn_Click"></Button>
-            </Grid>
-
-
-            <ScrollViewer Margin="0 50 0 0">
-                <TextBox Name="Result_TextBox" Height="400" IsReadOnly="True" Background="#eee" />
-            </ScrollViewer>
-            
-            
-        </StackPanel>
-        
     </Border>
 </Window>

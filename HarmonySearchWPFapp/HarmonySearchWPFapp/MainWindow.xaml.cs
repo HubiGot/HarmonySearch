@@ -13,6 +13,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using org.mariuszgromada.math.mxparser;
+using HarmonySearchWPFapp;
+using MathNet.Numerics;
+using Window = System.Windows.Window;
+using System.Windows.Media.Media3D;
 
 namespace HarmonySearchWPFapp
 {
@@ -21,9 +25,15 @@ namespace HarmonySearchWPFapp
     /// </summary>
     public partial class MainWindow : Window
     {
+        private SurfacePlotModel viewModel;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            // Initialize surface plot objects
+            viewModel = new SurfacePlotModel();
+            mySurfacePlotView.DataContext = viewModel;
         }
 
         private static double[] ParsePVB(String PVB_string, char separator)
@@ -119,6 +129,32 @@ namespace HarmonySearchWPFapp
            
         }
 
-       
+        private void Plot_btn_Click(object sender, RoutedEventArgs e)
+        {
+            viewModel.ZAxisLabel = "os z";
+            viewModel.YAxisLabel = "os y";
+            viewModel.XAxisLabel = "os x";
+            viewModel.Title = "Objective function";
+            viewModel.ShowContourLines = true;
+            viewModel.ShowMiniCoordinates = true;
+            double[] x_tab = Generate.LinearRange(-5, 0.01, 5);
+            double[] y_tab = Generate.LinearRange(-5, 0.01, 5);
+            double[,] z_tab = new double[x_tab.GetLength(0), y_tab.GetLength(0)];
+            double[] xy_tab = new double[2];
+            double temp;
+            String fun_string = ObjFun_ComboBox.Text.ToString();
+            Function f = new Function(fun_string);
+            for(int i=0; i<x_tab.GetLength(0); i++)
+            {
+                for(int j=0; j< y_tab.GetLength(0); j++)
+                {
+                    xy_tab[0] = x_tab[i];
+                    xy_tab[1] = y_tab[j];
+                    z_tab[i, j] = HarmonyTool.EvaluateFun(f, xy_tab);
+                }
+            }
+            viewModel.PlotData(x_tab, y_tab, z_tab);
+
+        }
     }
 }
