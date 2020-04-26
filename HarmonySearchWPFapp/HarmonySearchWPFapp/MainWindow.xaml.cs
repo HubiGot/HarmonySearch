@@ -125,21 +125,52 @@ namespace HarmonySearchWPFapp
         private void Plot_btn_Click(object sender, RoutedEventArgs e)
         {
 
-            var tmp = new PlotModel { Title = "Scatter plot", Subtitle = "y = x" };
-            var s2 = new LineSeries
-            {
-                StrokeThickness = 1,
-                MarkerSize = 1,
-                MarkerStroke = OxyColors.ForestGreen,
-                MarkerType = MarkerType.Plus
-            };
+            var tmp = new PlotModel { Title = "Contour Plot", Subtitle = "f(x1,x2)" };
+            double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ',');
+            double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ',');
+            String fun_str = ObjFun_ComboBox.Text.ToString();
+            Function fn = new Function(fun_str);
+            double x1_min;
+            double x1_max;
+            double x2_min;
+            double x2_max;
 
-            for (int i = 0; i < 100; i++)
+            if (PVBmin.GetLength(0) == 2)
             {
-                s2.Points.Add(new DataPoint(i, i));
+                x1_min = PVBmin[0];
+                x1_max = PVBmax[0];
+                x2_min = PVBmin[1];
+                x2_max = PVBmax[1];
+                var x1x1 = ArrayBuilder.CreateVector(x1_min, x1_max, 300);
+                var x2x2 = ArrayBuilder.CreateVector(x2_min, x2_max, 300);
+                double[,] peaksData = new double[x1x1.GetLength(0), x2x2.GetLength(0)];
+                double[] xy_tab = new double[2];
+
+                for (int i = 0; i < x1x1.GetLength(0); i++)
+                {
+                    for (int j = 0; j < x2x2.GetLength(0); j++)
+                    {
+                        xy_tab[0] = x1x1[i];
+                        xy_tab[1] = x2x2[j];
+                        peaksData[i, j] = HarmonyTool.EvaluateFun(fn, xy_tab);
+                    }
+                }
+
+                var cs = new ContourSeries
+                {
+                    Color = OxyColors.Black,
+                    LabelBackground = OxyColors.White,
+                    ColumnCoordinates = x2x2,
+                    RowCoordinates = x1x1,
+                    Data = peaksData
+                };
+                tmp.Series.Add(cs);
+                GetMainViewModel().MyModel = tmp;
             }
-            tmp.Series.Add(s2);
-            GetMainViewModel().MyModel = tmp;
+            else
+            {
+                MessageBox.Show("Number of variables does not equal n=2");
+            }
         }
 
         // C#6.O
