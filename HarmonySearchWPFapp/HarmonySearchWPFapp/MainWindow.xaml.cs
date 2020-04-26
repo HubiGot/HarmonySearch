@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using org.mariuszgromada.math.mxparser;
 using OxyPlot;
+using OxyPlot.Axes;
 using OxyPlot.Series;
 
 namespace HarmonySearchWPFapp
@@ -126,6 +127,13 @@ namespace HarmonySearchWPFapp
         {
 
             var tmp = new PlotModel { Title = "Contour Plot", Subtitle = "f(x1,x2)" };
+
+            tmp.Axes.Add(new LinearColorAxis
+            {
+                Position = OxyPlot.Axes.AxisPosition.Right,
+                Palette = OxyPalettes.Rainbow(100)
+            });
+
             double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ',');
             double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ',');
             String fun_str = ObjFun_ComboBox.Text.ToString();
@@ -135,14 +143,15 @@ namespace HarmonySearchWPFapp
             double x2_min;
             double x2_max;
 
+
             if (PVBmin.GetLength(0) == 2)
             {
                 x1_min = PVBmin[0];
                 x1_max = PVBmax[0];
                 x2_min = PVBmin[1];
                 x2_max = PVBmax[1];
-                var x1x1 = ArrayBuilder.CreateVector(x1_min, x1_max, 300);
-                var x2x2 = ArrayBuilder.CreateVector(x2_min, x2_max, 300);
+                var x1x1 = ArrayBuilder.CreateVector(x1_min, x1_max, 200);
+                var x2x2 = ArrayBuilder.CreateVector(x2_min, x2_max, 200);
                 double[,] peaksData = new double[x1x1.GetLength(0), x2x2.GetLength(0)];
                 double[] xy_tab = new double[2];
 
@@ -156,12 +165,26 @@ namespace HarmonySearchWPFapp
                     }
                 }
 
+
+
+                var heatMapSeries = new HeatMapSeries
+                {
+                    X0 = x1_min,
+                    X1 = x1_max,
+                    Y0 = x2_min,
+                    Y1 = x2_max,
+                    Interpolate = true,
+                    RenderMethod = HeatMapRenderMethod.Bitmap,
+                    Data = peaksData
+                };
+                tmp.Series.Add(heatMapSeries);
+
                 var cs = new ContourSeries
                 {
                     Color = OxyColors.Black,
                     LabelBackground = OxyColors.White,
-                    ColumnCoordinates = x2x2,
-                    RowCoordinates = x1x1,
+                    ColumnCoordinates = x1x1,
+                    RowCoordinates = x2x2,
                     Data = peaksData
                 };
                 tmp.Series.Add(cs);
