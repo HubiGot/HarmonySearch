@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using org.mariuszgromada.math.mxparser;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace HarmonySearchWPFapp
 {
@@ -21,6 +23,7 @@ namespace HarmonySearchWPFapp
     /// </summary>
     public partial class MainWindow : Window
     {
+       
         public MainWindow()
         {
             InitializeComponent();
@@ -119,6 +122,31 @@ namespace HarmonySearchWPFapp
            
         }
 
-       
+        private void Plot_btn_Click(object sender, RoutedEventArgs e)
+        {
+
+            var tmp = new PlotModel { Title = "Scatter plot", Subtitle = "y = x" };
+            var s2 = new LineSeries
+            {
+                StrokeThickness = 1,
+                MarkerSize = 1,
+                MarkerStroke = OxyColors.ForestGreen,
+                MarkerType = MarkerType.Plus
+            };
+
+            for (int i = 0; i < 100; i++)
+            {
+                s2.Points.Add(new DataPoint(i, i));
+            }
+            tmp.Series.Add(s2);
+            GetMainViewModel().MyModel = tmp;
+        }
+
+        // C#6.O
+        //public MainViewModel MainViewModel => (MainViewModel)DataContext;
+        public MainViewModel GetMainViewModel()
+        {
+            return (MainViewModel)DataContext;
+        }
     }
 }
