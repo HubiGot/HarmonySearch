@@ -94,8 +94,8 @@ namespace HarmonySearchWPFapp
             int HMS = int.Parse(HMS_TextBox.Text);
             double BW = Double.Parse(BW_TextBox.Text);
             String fun_str = ObjFun_ComboBox.Text.ToString();
-            double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ',');
-            double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ',');
+            double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ';');
+            double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ';');
             Function fn = new Function(fun_str);
             String result = HarmonyTool.HarmonySearchAlgorithm(fn, NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax);
             Result_TextBox.Text = result;
@@ -131,11 +131,12 @@ namespace HarmonySearchWPFapp
             tmp.Axes.Add(new LinearColorAxis
             {
                 Position = OxyPlot.Axes.AxisPosition.Right,
+                //Palette = OxyPalettes.Jet(500)
                 Palette = OxyPalettes.Rainbow(100)
             });
 
-            double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ',');
-            double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ',');
+            double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ';');
+            double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ';');
             String fun_str = ObjFun_ComboBox.Text.ToString();
             Function fn = new Function(fun_str);
             double x1_min;
@@ -150,8 +151,8 @@ namespace HarmonySearchWPFapp
                 x1_max = PVBmax[0];
                 x2_min = PVBmin[1];
                 x2_max = PVBmax[1];
-                var x1x1 = ArrayBuilder.CreateVector(x1_min, x1_max, 200);
-                var x2x2 = ArrayBuilder.CreateVector(x2_min, x2_max, 200);
+                var x1x1 = ArrayBuilder.CreateVector(x1_min, x1_max, 100);
+                var x2x2 = ArrayBuilder.CreateVector(x2_min, x2_max, 100);
                 double[,] peaksData = new double[x1x1.GetLength(0), x2x2.GetLength(0)];
                 double[] xy_tab = new double[2];
 
@@ -192,7 +193,7 @@ namespace HarmonySearchWPFapp
             }
             else
             {
-                MessageBox.Show("Number of variables does not equal n=2");
+                MessageBox.Show("Number of variables does not equal n=2! Ploting only for n=2");
             }
         }
 
