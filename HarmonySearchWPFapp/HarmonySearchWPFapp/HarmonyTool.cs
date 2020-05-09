@@ -179,7 +179,7 @@ namespace HarmonySearchWPFapp
         }
 
 
-        public static String HarmonySearchAlgorithm(Function f, int NI, int HMS, double HMCR, double PAR, double BW, double[] PVBmin, double[] PVBmax)
+        public static String HarmonySearchAlgorithm(Function f, int NI, int HMS, double HMCR, double PAR, double BW, double[] PVBmin, double[] PVBmax, ref double[] bestSolution)
         {
             String output = "";
             int numberofVariables = f.getArgumentsNumber();
@@ -198,6 +198,16 @@ namespace HarmonySearchWPFapp
                     output +="Iteration number: "+iterations.ToString()+"\n" + HarmonyTool.DisplayBestSolution(HMtab)+"\n";
                 }
                 iterations++;
+            }
+            if(HMtab.GetLength(1)-1 == 2)
+            {
+                bestSolution[0] = HMtab[0, 0];
+                bestSolution[1] = HMtab[0, 1];
+            }
+            else
+            {
+                bestSolution[0] = Double.NaN;
+                bestSolution[1] = Double.NaN;
             }
 
             return output;

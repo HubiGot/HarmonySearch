@@ -144,8 +144,15 @@
 
             <StackPanel Grid.Column="1" Margin="0,0,30,0">
                 <oxy:PlotView VerticalAlignment="Center" x:Name="Plot1" Model="{Binding MyModel}" Height="780" Margin="0,0,28,0" Padding="10 0 10 10"/>
-                <Button x:Name="Plot_btn" Click="Plot_btn_Click" Margin="30.5,0,0,0" HorizontalAlignment="Left" Width="605">Plot function</Button>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
+                    <Button Grid.Column="0" x:Name="Plot_btn" Click="Plot_btn_Click" Margin="30,0,0,0" HorizontalAlignment="Left" Width="305">Plot function</Button>
+                    <CheckBox x:Name="solutionCheckBox" Grid.Column="1" Margin="10 0 0 0">include best solution on contour plot</CheckBox>
+                </Grid>
             </StackPanel>
 
         </Grid>

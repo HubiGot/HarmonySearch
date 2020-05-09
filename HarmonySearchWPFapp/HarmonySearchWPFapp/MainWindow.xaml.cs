@@ -24,7 +24,9 @@ namespace HarmonySearchWPFapp
     /// </summary>
     public partial class MainWindow : Window
     {
-       
+        //array to store best solution from HS algorith, to pass to plot function
+        double[] bestSolution = new double[2];
+
         public MainWindow()
         {
             InitializeComponent();
@@ -97,13 +99,8 @@ namespace HarmonySearchWPFapp
             double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ';');
             double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ';');
             Function fn = new Function(fun_str);
-            String result = HarmonyTool.HarmonySearchAlgorithm(fn, NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax);
+            String result = HarmonyTool.HarmonySearchAlgorithm(fn, NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax, ref bestSolution);
             Result_TextBox.Text = result;
-
-
-
-
-
 
         }
 
@@ -143,7 +140,7 @@ namespace HarmonySearchWPFapp
             double x1_max;
             double x2_min;
             double x2_max;
-
+            double tmpMaxValue = Double.MinValue;
 
             if (PVBmin.GetLength(0) == 2)
             {
@@ -163,9 +160,12 @@ namespace HarmonySearchWPFapp
                         xy_tab[0] = x1x1[i];
                         xy_tab[1] = x2x2[j];
                         peaksData[i, j] = HarmonyTool.EvaluateFun(fn, xy_tab);
+                        if (peaksData[i, j] > tmpMaxValue)
+                        {
+                            tmpMaxValue = peaksData[i, j];
+                        }
                     }
                 }
-
 
 
                 var heatMapSeries = new HeatMapSeries
@@ -180,6 +180,7 @@ namespace HarmonySearchWPFapp
                 };
                 tmp.Series.Add(heatMapSeries);
 
+
                 var cs = new ContourSeries
                 {
                     Color = OxyColors.Black,
@@ -189,6 +190,22 @@ namespace HarmonySearchWPFapp
                     Data = peaksData
                 };
                 tmp.Series.Add(cs);
+
+                if (solutionCheckBox.IsChecked == true)
+                {
+                    var sc = new ScatterSeries
+                    {
+                        MarkerType = MarkerType.Circle
+                    };
+                    sc.BinSize = 10;
+                    sc.MarkerType = MarkerType.Cross;
+                    sc.MarkerStrokeThickness = 3;
+                    sc.MarkerStroke = OxyColors.Black;
+                    double x1 = bestSolution[0];
+                    double x2 = bestSolution[1];
+                    sc.Points.Add(new OxyPlot.Series.ScatterPoint(x1, x2, 5, tmpMaxValue));
+                    tmp.Series.Add(sc);
+                }
                 GetMainViewModel().MyModel = tmp;
             }
             else
