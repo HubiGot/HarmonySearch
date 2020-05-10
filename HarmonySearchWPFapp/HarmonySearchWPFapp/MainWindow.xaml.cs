@@ -93,9 +93,24 @@ namespace HarmonySearchWPFapp
                 String fun_str = ObjFun_ComboBox.Text.ToString();
                 double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ';');
                 double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ';');
-                Function fn = new Function(fun_str);
-                String result = HarmonyTool.HarmonySearchAlgorithm(fn, NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax, ref bestSolution);
-                Result_TextBox.Text = result;
+                bool errFlag=false;
+                for(int i=0; i<PVBmax.Length; i++)
+                {
+                    if (PVBmax[i] <= PVBmin[i])
+                    {
+                        errFlag = true;
+                    }
+                }
+                if (errFlag)
+                {
+                    MessageBox.Show("PVB not given correctly! Check bounds", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    Function fn = new Function(fun_str);
+                    String result = HarmonyTool.HarmonySearchAlgorithm(fn, NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax, ref bestSolution);
+                    Result_TextBox.Text = result;
+                }
             }
             catch(Exception ex)
             {
@@ -131,9 +146,16 @@ namespace HarmonySearchWPFapp
                     //Palette = OxyPalettes.Jet(500)
                     Palette = OxyPalettes.Rainbow(100)
                 });
-
                 double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ';');
                 double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ';');
+                bool errFlag = false;
+                for (int i = 0; i < PVBmax.Length; i++)
+                {
+                    if (PVBmax[i] <= PVBmin[i])
+                    {
+                        errFlag = true;
+                    }
+                }
                 String fun_str = ObjFun_ComboBox.Text.ToString();
                 Function fn = new Function(fun_str);
                 double x1_min;
@@ -142,7 +164,7 @@ namespace HarmonySearchWPFapp
                 double x2_max;
                 double tmpMaxValue = Double.MinValue;
 
-                if (PVBmin.GetLength(0) == 2)
+                if (PVBmin.GetLength(0) == 2 && !errFlag)
                 {
                     x1_min = PVBmin[0];
                     x1_max = PVBmax[0];
@@ -210,7 +232,7 @@ namespace HarmonySearchWPFapp
                 }
                 else
                 {
-                    MessageBox.Show("Number of variables does not equal n=2. Ploting only for n=2", "Exception",MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Number of variables does not equal n = 2 or PVB not given correctly! Check forms", "Exception",MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch(Exception ex)
