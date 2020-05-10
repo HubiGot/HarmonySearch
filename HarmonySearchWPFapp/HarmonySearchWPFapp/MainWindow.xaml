@@ -73,13 +73,13 @@
 
                     <!--PVB min -->
                     <StackPanel  Margin="0 0 5 0" Grid.Column="0">
-                        <TextBlock Text="PVBmin" FontWeight="Bold"/>
+                        <TextBlock Text="PVBmin (x1;x2;...;xn)" FontWeight="Bold"/>
                         <TextBox x:Name="PVBmin_TextBox" Padding="2"/>
                     </StackPanel>
 
                     <!--PVB max -->
                     <StackPanel  Margin="0 0 0 0" Grid.Column="1">
-                        <TextBlock Text="PVBmax" FontWeight="Bold"/>
+                        <TextBlock Text="PVBmax (x1;x2;...;xn)" FontWeight="Bold"/>
                         <TextBox x:Name="PVBmax_TextBox" Padding="2"/>
                     </StackPanel>
 
