@@ -13,10 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using org.mariuszgromada.math.mxparser;
-using HarmonySearchWPFapp;
-using MathNet.Numerics;
-using Window = System.Windows.Window;
-using System.Windows.Media.Media3D;
+using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 
 namespace HarmonySearchWPFapp
 {
@@ -25,15 +24,12 @@ namespace HarmonySearchWPFapp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private SurfacePlotModel viewModel;
+        //array to store best solution from HS algorith, to pass to plot function
+        double[] bestSolution = new double[2];
 
         public MainWindow()
         {
             InitializeComponent();
-
-            // Initialize surface plot objects
-            viewModel = new SurfacePlotModel();
-            mySurfacePlotView.DataContext = viewModel;
         }
 
         private static double[] ParsePVB(String PVB_string, char separator)
@@ -41,19 +37,12 @@ namespace HarmonySearchWPFapp
             String[] PVB_strTab = PVB_string.Split(separator);
             int tabLength = PVB_strTab.GetLength(0);
             double[] PVB_returnTab = new double[tabLength];
-            try
+            for(int i=0; i<tabLength; i++)
             {
-                for(int i=0; i<tabLength; i++)
-                {
-                    PVB_returnTab[i] = Double.Parse(PVB_strTab[i]);
-                }
-                return PVB_returnTab;
+                PVB_returnTab[i] = Double.Parse(PVB_strTab[i]);
             }
-            catch
-            {
-                MessageBox.Show("Items in PVB are not correct!");
-                return null;
-            }
+            return PVB_returnTab;
+
         }
 
         private void PAR_slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -94,23 +83,39 @@ namespace HarmonySearchWPFapp
 
         private void Calculate_Btn_Click(object sender, RoutedEventArgs e)
         {
-            double HMCR = Double.Parse(HMCR_textbox.Text);
-            double PAR = Double.Parse(PAR_textbox.Text);
-            int NI = int.Parse(NI_TextBox.Text);
-            int HMS = int.Parse(HMS_TextBox.Text);
-            double BW = Double.Parse(BW_TextBox.Text);
-            String fun_str = ObjFun_ComboBox.Text.ToString();
-            double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ',');
-            double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ',');
-            Function fn = new Function(fun_str);
-            String result = HarmonyTool.HarmonySearchAlgorithm(fn, NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax);
-            Result_TextBox.Text = result;
-
-
-
-
-
-
+            try
+            {
+                double HMCR = Double.Parse(HMCR_textbox.Text);
+                double PAR = Double.Parse(PAR_textbox.Text);
+                int NI = int.Parse(NI_TextBox.Text);
+                int HMS = int.Parse(HMS_TextBox.Text);
+                double BW = Double.Parse(BW_TextBox.Text);
+                String fun_str = ObjFun_ComboBox.Text.ToString();
+                double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ';');
+                double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ';');
+                bool errFlag=false;
+                for(int i=0; i<PVBmax.Length; i++)
+                {
+                    if (PVBmax[i] <= PVBmin[i])
+                    {
+                        errFlag = true;
+                    }
+                }
+                if (errFlag)
+                {
+                    MessageBox.Show("PVB not given correctly! Check bounds", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    Function fn = new Function(fun_str);
+                    String result = HarmonyTool.HarmonySearchAlgorithm(fn, NI, HMS, HMCR, PAR, BW, PVBmin, PVBmax, ref bestSolution);
+                    Result_TextBox.Text = result;
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("A handled exception just occurred: " + ex.Message +"\n Check if forms are filled properly!", "Exception", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         private void Reset_Btn_Click(object sender, RoutedEventArgs e)
@@ -131,30 +136,116 @@ namespace HarmonySearchWPFapp
 
         private void Plot_btn_Click(object sender, RoutedEventArgs e)
         {
-            viewModel.ZAxisLabel = "os z";
-            viewModel.YAxisLabel = "os y";
-            viewModel.XAxisLabel = "os x";
-            viewModel.Title = "Objective function";
-            viewModel.ShowContourLines = true;
-            viewModel.ShowMiniCoordinates = true;
-            double[] x_tab = Generate.LinearRange(-5, 0.01, 5);
-            double[] y_tab = Generate.LinearRange(-5, 0.01, 5);
-            double[,] z_tab = new double[x_tab.GetLength(0), y_tab.GetLength(0)];
-            double[] xy_tab = new double[2];
-            double temp;
-            String fun_string = ObjFun_ComboBox.Text.ToString();
-            Function f = new Function(fun_string);
-            for(int i=0; i<x_tab.GetLength(0); i++)
+            try
             {
-                for(int j=0; j< y_tab.GetLength(0); j++)
+                var tmp = new PlotModel { Title = "Contour Plot", Subtitle = "f(x1,x2)" };
+
+                tmp.Axes.Add(new LinearColorAxis
                 {
-                    xy_tab[0] = x_tab[i];
-                    xy_tab[1] = y_tab[j];
-                    z_tab[i, j] = HarmonyTool.EvaluateFun(f, xy_tab);
+                    Position = OxyPlot.Axes.AxisPosition.Right,
+                    //Palette = OxyPalettes.Jet(500)
+                    Palette = OxyPalettes.Rainbow(100)
+                });
+                double[] PVBmax = ParsePVB(PVBmax_TextBox.Text, ';');
+                double[] PVBmin = ParsePVB(PVBmin_TextBox.Text, ';');
+                bool errFlag = false;
+                for (int i = 0; i < PVBmax.Length; i++)
+                {
+                    if (PVBmax[i] <= PVBmin[i])
+                    {
+                        errFlag = true;
+                    }
+                }
+                String fun_str = ObjFun_ComboBox.Text.ToString();
+                Function fn = new Function(fun_str);
+                double x1_min;
+                double x1_max;
+                double x2_min;
+                double x2_max;
+                double tmpMaxValue = Double.MinValue;
+
+                if (PVBmin.GetLength(0) == 2 && !errFlag)
+                {
+                    x1_min = PVBmin[0];
+                    x1_max = PVBmax[0];
+                    x2_min = PVBmin[1];
+                    x2_max = PVBmax[1];
+                    var x1x1 = ArrayBuilder.CreateVector(x1_min, x1_max, 100);
+                    var x2x2 = ArrayBuilder.CreateVector(x2_min, x2_max, 100);
+                    double[,] peaksData = new double[x1x1.GetLength(0), x2x2.GetLength(0)];
+                    double[] xy_tab = new double[2];
+
+                    for (int i = 0; i < x1x1.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < x2x2.GetLength(0); j++)
+                        {
+                            xy_tab[0] = x1x1[i];
+                            xy_tab[1] = x2x2[j];
+                            peaksData[i, j] = HarmonyTool.EvaluateFun(fn, xy_tab);
+                            if (peaksData[i, j] > tmpMaxValue)
+                            {
+                                tmpMaxValue = peaksData[i, j];
+                            }
+                        }
+                    }
+
+
+                    var heatMapSeries = new HeatMapSeries
+                    {
+                        X0 = x1_min,
+                        X1 = x1_max,
+                        Y0 = x2_min,
+                        Y1 = x2_max,
+                        Interpolate = true,
+                        RenderMethod = HeatMapRenderMethod.Bitmap,
+                        Data = peaksData
+                    };
+                    tmp.Series.Add(heatMapSeries);
+
+
+                    var cs = new ContourSeries
+                    {
+                        Color = OxyColors.Black,
+                        LabelBackground = OxyColors.White,
+                        ColumnCoordinates = x1x1,
+                        RowCoordinates = x2x2,
+                        Data = peaksData
+                    };
+                    tmp.Series.Add(cs);
+
+                    if (solutionCheckBox.IsChecked == true)
+                    {
+                        var sc = new ScatterSeries
+                        {
+                            MarkerType = MarkerType.Circle
+                        };
+                        sc.BinSize = 10;
+                        sc.MarkerType = MarkerType.Cross;
+                        sc.MarkerStrokeThickness = 3;
+                        sc.MarkerStroke = OxyColors.Black;
+                        double x1 = bestSolution[0];
+                        double x2 = bestSolution[1];
+                        sc.Points.Add(new OxyPlot.Series.ScatterPoint(x1, x2, 5, tmpMaxValue));
+                        tmp.Series.Add(sc);
+                    }
+                    GetMainViewModel().MyModel = tmp;
+                }
+                else
+                {
+                    MessageBox.Show("Number of variables does not equal n = 2 or PVB not given correctly! Check forms", "Exception",MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
-            viewModel.PlotData(x_tab, y_tab, z_tab);
+            catch(Exception ex)
+            {
+                MessageBox.Show("A handled exception just occurred: " + ex.Message + "\n Check if forms are filled properly! Domain of function has to be set in PVB forms", "Exception", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
 
+        // C#6.O
+        //public MainViewModel MainViewModel => (MainViewModel)DataContext;
+        public MainViewModel GetMainViewModel()
+        {
+            return (MainViewModel)DataContext;
         }
     }
 }

@@ -67,13 +67,25 @@ namespace HarmonySearchWPFapp
             }
             return partialHM;
         }
-        //obliczanie f(x) dla kazdego wektora z HM
+
+        public static String DisplayBestSolution(double[,] HMtab)
+        {
+            String partialHM = "";
+             for (int j = 0; j < HMtab.GetLength(1); j++)
+             {
+                partialHM += HMtab[0, j].ToString() + " ";
+             }
+                partialHM += "\n";
+            return partialHM;
+        }
+
+        //calculating f(x) for every vector in HM
         public static void PerformHM(Function f, double[,] HMtab)
         {
             double[] valuesOfVariables = new double[HMtab.GetLength(1) - 1];
             for (int i = 0; i < HMtab.GetLength(0); i++)
             {
-                for (int j = 0; j < HMtab.GetLength(1) - 1; j++) //przejscie po parametrach, wykluczajac ostatnia kolumne z wartoscia f(x)
+                for (int j = 0; j < HMtab.GetLength(1) - 1; j++) //going through parameters excluding column with f(x)
                 {
                     valuesOfVariables[j] = HMtab[i, j];
                 }
@@ -81,13 +93,13 @@ namespace HarmonySearchWPFapp
             }
         }
 
-        //obliczanie wartosci f(x) nowego wektora 
+        //calculating f(x) value for new vector
         public static void PperformVec(Function f, double[] vec)
         {
             double[] vecOfValues = new double[f.getArgumentsNumber()];
             for (int i = 0; i < f.getArgumentsNumber(); i++)
             {
-                vecOfValues[i] = vec[i]; //przypisanie wartosci do wektora pomocniczego z wektora nowo znalezionego
+                vecOfValues[i] = vec[i]; //assigning value to temporary vector from new found vector
             }
             vec[vec.GetLength(0) - 1] = HarmonyTool.EvaluateFun(f, vecOfValues);
         }
@@ -118,7 +130,7 @@ namespace HarmonySearchWPFapp
             int variables = HMtab.GetLength(1);
             System.Random rng = SystemRandomSource.Default;
             double[] vec = new double[variables]; //new harmony vector
-            for (int i = 0; i < variables - 1; i++) // -1 bo osatnia kolumna dla f(X)
+            for (int i = 0; i < variables - 1; i++) // -1 because last column contain f(X)
             {
                 if (rng.NextDouble() < HMCR)
                 {
@@ -146,7 +158,7 @@ namespace HarmonySearchWPFapp
                 }
                 else
                 {
-                    vec[i] = rng.NextDouble() * (PVBmax[i] - PVBmin[i]) + PVBmin[i]; //randomizacja
+                    vec[i] = rng.NextDouble() * (PVBmax[i] - PVBmin[i]) + PVBmin[i]; //randomization
                 }
             }
             return vec;
@@ -167,7 +179,7 @@ namespace HarmonySearchWPFapp
         }
 
 
-        public static String HarmonySearchAlgorithm(Function f, int NI, int HMS, double HMCR, double PAR, double BW, double[] PVBmin, double[] PVBmax)
+        public static String HarmonySearchAlgorithm(Function f, int NI, int HMS, double HMCR, double PAR, double BW, double[] PVBmin, double[] PVBmax, ref double[] bestSolution)
         {
             String output = "";
             int numberofVariables = f.getArgumentsNumber();
@@ -181,11 +193,21 @@ namespace HarmonySearchWPFapp
             {
                 newVec = HarmonyTool.NewHarmonyVector(HMtab, HMCR, PAR, BW, PVBmin, PVBmax);
                 HarmonyTool.UpdateHM(HMtab, f, newVec);
-                if (NI-iterations <= 3)
+                if (NI-iterations <= 20)
                 {
-                    output +="Iteration number: "+iterations.ToString()+"\n" + HarmonyTool.DisplayHM(HMtab)+"\n"+"\n";
+                    output +="Iteration number: "+iterations.ToString()+"\n" + HarmonyTool.DisplayBestSolution(HMtab)+"\n";
                 }
                 iterations++;
+            }
+            if(HMtab.GetLength(1)-1 == 2)
+            {
+                bestSolution[0] = HMtab[0, 0];
+                bestSolution[1] = HMtab[0, 1];
+            }
+            else
+            {
+                bestSolution[0] = Double.NaN;
+                bestSolution[1] = Double.NaN;
             }
 
             return output;
