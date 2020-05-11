@@ -134,7 +134,7 @@ namespace HarmonySearchWPFapp
             {
                 if (rng.NextDouble() < HMCR)
                 {
-                    newIndex = rng.Next(0,10);
+                    newIndex = rng.Next(0,HMtab.GetLength(0));
                     vec[i] = HMtab[newIndex, i];
                     if (rng.NextDouble() < PAR)
                     {
