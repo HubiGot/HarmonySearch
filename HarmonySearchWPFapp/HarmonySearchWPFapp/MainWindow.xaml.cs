@@ -206,7 +206,7 @@ namespace HarmonySearchWPFapp
                     var cs = new ContourSeries
                     {
                         Color = OxyColors.Black,
-                        LabelBackground = OxyColors.White,
+                        LabelBackground = OxyColors.Transparent,
                         ColumnCoordinates = x1x1,
                         RowCoordinates = x2x2,
                         Data = peaksData

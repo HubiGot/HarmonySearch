@@ -7,7 +7,7 @@ using OxyPlot;
 using OxyPlot.Series;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-
+using OxyPlot.Axes;
 
 namespace HarmonySearchWPFapp
 {
@@ -18,6 +18,13 @@ namespace HarmonySearchWPFapp
         {
 
             this.MyModel = new PlotModel { Title = "ContourSeries" };
+
+            this.MyModel.Axes.Add(new LinearColorAxis
+            {
+                Position = OxyPlot.Axes.AxisPosition.Right,
+                //Palette = OxyPalettes.Jet(500)
+                Palette = OxyPalettes.Rainbow(100)
+            });
 
             double x0 = -3.1;
             double x1 = 3.1;
@@ -30,10 +37,24 @@ namespace HarmonySearchWPFapp
             var yy = ArrayBuilder.CreateVector(y0, y1, 100);
             var peaksData = ArrayBuilder.Evaluate(peaks, xx, yy);
 
+
+            var heatMapSeries = new HeatMapSeries
+            {
+                X0 = x0,
+                X1 = x1,
+                Y0 = y0,
+                Y1 = y1,
+                Interpolate = true,
+                RenderMethod = HeatMapRenderMethod.Bitmap,
+                Data = peaksData
+            };
+            this.MyModel.Series.Add(heatMapSeries);
+
+
             var cs = new ContourSeries
             {
                 Color = OxyColors.Black,
-                LabelBackground = OxyColors.White,
+                LabelBackground = OxyColors.Transparent,
                 ColumnCoordinates = yy,
                 RowCoordinates = xx,
                 Data = peaksData
